@@ -142,7 +142,7 @@ https://github.com/bazillion/zipfs
 
 ## Skeleton
 
-Let's start with a skeleton with a argument parsing:
+Let's start with a skeleton with argument parsing:
 
 ``` go
 package main
