@@ -12,6 +12,7 @@ import (
 
 	"bazil.org/fuse"
 	"bazil.org/fuse/fs"
+	"golang.org/x/net/context"
 )
 
 // We assume the zip file contains entries for directories too.
@@ -112,7 +113,7 @@ func (d *Dir) Attr() fuse.Attr {
 
 var _ = fs.NodeRequestLookuper(&Dir{})
 
-func (d *Dir) Lookup(req *fuse.LookupRequest, resp *fuse.LookupResponse, intr fs.Intr) (fs.Node, fuse.Error) {
+func (d *Dir) Lookup(ctx context.Context, req *fuse.LookupRequest, resp *fuse.LookupResponse) (fs.Node, fuse.Error) {
 	path := req.Name
 	if d.file != nil {
 		path = d.file.Name + path
@@ -137,7 +138,7 @@ func (d *Dir) Lookup(req *fuse.LookupRequest, resp *fuse.LookupResponse, intr fs
 
 var _ = fs.HandleReadDirer(&Dir{})
 
-func (d *Dir) ReadDir(intr fs.Intr) ([]fuse.Dirent, fuse.Error) {
+func (d *Dir) ReadDir(ctx context.Context) ([]fuse.Dirent, fuse.Error) {
 	prefix := ""
 	if d.file != nil {
 		prefix = d.file.Name
@@ -181,7 +182,7 @@ func (f *File) Attr() fuse.Attr {
 
 var _ = fs.NodeOpener(&File{})
 
-func (f *File) Open(req *fuse.OpenRequest, resp *fuse.OpenResponse, intr fs.Intr) (fs.Handle, fuse.Error) {
+func (f *File) Open(ctx context.Context, req *fuse.OpenRequest, resp *fuse.OpenResponse) (fs.Handle, fuse.Error) {
 	r, err := f.file.Open()
 	if err != nil {
 		return nil, err
@@ -199,13 +200,13 @@ var _ fs.Handle = (*FileHandle)(nil)
 
 var _ fs.HandleReleaser = (*FileHandle)(nil)
 
-func (fh *FileHandle) Release(req *fuse.ReleaseRequest, intr fs.Intr) fuse.Error {
+func (fh *FileHandle) Release(ctx context.Context, req *fuse.ReleaseRequest) fuse.Error {
 	return fh.r.Close()
 }
 
 var _ = fs.HandleReader(&FileHandle{})
 
-func (fh *FileHandle) Read(req *fuse.ReadRequest, resp *fuse.ReadResponse, intr fs.Intr) fuse.Error {
+func (fh *FileHandle) Read(ctx context.Context, req *fuse.ReadRequest, resp *fuse.ReadResponse) fuse.Error {
 	// We don't actually enforce Offset to match where previous read
 	// ended. Maybe we should, but that would mean'd we need to track
 	// it. The kernel *should* do it for us, based on the
