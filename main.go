@@ -78,7 +78,7 @@ type FS struct {
 
 var _ fs.FS = (*FS)(nil)
 
-func (f *FS) Root() (fs.Node, fuse.Error) {
+func (f *FS) Root() (fs.Node, error) {
 	n := &Dir{
 		archive: f.archive,
 	}
@@ -113,7 +113,7 @@ func (d *Dir) Attr() fuse.Attr {
 
 var _ = fs.NodeRequestLookuper(&Dir{})
 
-func (d *Dir) Lookup(ctx context.Context, req *fuse.LookupRequest, resp *fuse.LookupResponse) (fs.Node, fuse.Error) {
+func (d *Dir) Lookup(ctx context.Context, req *fuse.LookupRequest, resp *fuse.LookupResponse) (fs.Node, error) {
 	path := req.Name
 	if d.file != nil {
 		path = d.file.Name + path
@@ -138,7 +138,7 @@ func (d *Dir) Lookup(ctx context.Context, req *fuse.LookupRequest, resp *fuse.Lo
 
 var _ = fs.HandleReadDirer(&Dir{})
 
-func (d *Dir) ReadDir(ctx context.Context) ([]fuse.Dirent, fuse.Error) {
+func (d *Dir) ReadDir(ctx context.Context) ([]fuse.Dirent, error) {
 	prefix := ""
 	if d.file != nil {
 		prefix = d.file.Name
@@ -182,7 +182,7 @@ func (f *File) Attr() fuse.Attr {
 
 var _ = fs.NodeOpener(&File{})
 
-func (f *File) Open(ctx context.Context, req *fuse.OpenRequest, resp *fuse.OpenResponse) (fs.Handle, fuse.Error) {
+func (f *File) Open(ctx context.Context, req *fuse.OpenRequest, resp *fuse.OpenResponse) (fs.Handle, error) {
 	r, err := f.file.Open()
 	if err != nil {
 		return nil, err
@@ -200,13 +200,13 @@ var _ fs.Handle = (*FileHandle)(nil)
 
 var _ fs.HandleReleaser = (*FileHandle)(nil)
 
-func (fh *FileHandle) Release(ctx context.Context, req *fuse.ReleaseRequest) fuse.Error {
+func (fh *FileHandle) Release(ctx context.Context, req *fuse.ReleaseRequest) error {
 	return fh.r.Close()
 }
 
 var _ = fs.HandleReader(&FileHandle{})
 
-func (fh *FileHandle) Read(ctx context.Context, req *fuse.ReadRequest, resp *fuse.ReadResponse) fuse.Error {
+func (fh *FileHandle) Read(ctx context.Context, req *fuse.ReadRequest, resp *fuse.ReadResponse) error {
 	// We don't actually enforce Offset to match where previous read
 	// ended. Maybe we should, but that would mean'd we need to track
 	// it. The kernel *should* do it for us, based on the
