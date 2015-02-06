@@ -136,9 +136,9 @@ func (d *Dir) Lookup(ctx context.Context, req *fuse.LookupRequest, resp *fuse.Lo
 	return nil, fuse.ENOENT
 }
 
-var _ = fs.HandleReadDirer(&Dir{})
+var _ = fs.HandleReadDirAller(&Dir{})
 
-func (d *Dir) ReadDir(ctx context.Context) ([]fuse.Dirent, error) {
+func (d *Dir) ReadDirAll(ctx context.Context) ([]fuse.Dirent, error) {
 	prefix := ""
 	if d.file != nil {
 		prefix = d.file.Name
