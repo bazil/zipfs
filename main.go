@@ -93,22 +93,21 @@ type Dir struct {
 
 var _ fs.Node = (*Dir)(nil)
 
-func zipAttr(f *zip.File) fuse.Attr {
-	return fuse.Attr{
-		Size:   f.UncompressedSize64,
-		Mode:   f.Mode(),
-		Mtime:  f.ModTime(),
-		Ctime:  f.ModTime(),
-		Crtime: f.ModTime(),
-	}
+func zipAttr(f *zip.File, a *fuse.Attr) {
+	a.Size = f.UncompressedSize64
+	a.Mode = f.Mode()
+	a.Mtime = f.ModTime()
+	a.Ctime = f.ModTime()
+	a.Crtime = f.ModTime()
 }
 
-func (d *Dir) Attr() fuse.Attr {
+func (d *Dir) Attr(a *fuse.Attr) {
 	if d.file == nil {
 		// root directory
-		return fuse.Attr{Mode: os.ModeDir | 0755}
+		a.Mode = os.ModeDir | 0755
+		return
 	}
-	return zipAttr(d.file)
+	zipAttr(d.file, a)
 }
 
 var _ = fs.NodeRequestLookuper(&Dir{})
@@ -176,8 +175,8 @@ type File struct {
 
 var _ fs.Node = (*File)(nil)
 
-func (f *File) Attr() fuse.Attr {
-	return zipAttr(f.file)
+func (f *File) Attr(a *fuse.Attr) {
+	zipAttr(f.file, a)
 }
 
 var _ = fs.NodeOpener(&File{})
