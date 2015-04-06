@@ -138,7 +138,7 @@ read-only view of the contents of a
 [Zip archive](http://golang.org/pkg/archive/zip/).
 
 The full source code is available at
-https://github.com/bazillion/zipfs
+https://github.com/bazil/zipfs
 
 ## Skeleton
 
@@ -489,7 +489,7 @@ $ fusermount -u mnt
 ```
 
 That's it! For a longer and more featureful examples to read, see
-https://github.com/bazillion/bolt-mount
+https://github.com/bazil/bolt-mount
 ([screencast of a code walkthrough](http://eagain.net/talks/bolt-mount/))
 and all of the
 [projects importing fuse](http://godoc.org/bazil.org/fuse?importers).
@@ -515,7 +515,7 @@ and all of the
 - [OSXFUSE](https://osxfuse.github.io/) is a FUSE kernel
   implementation for OS X.
 
-- [`bolt-mount`](https://github.com/bazillion/bolt-mount) is a more
+- [`bolt-mount`](https://github.com/bazil/bolt-mount) is a more
   comprehensive example filesystem, including write operations. See
   also a
   [screencast of a code walkthrough](http://eagain.net/talks/bolt-mount/).
