@@ -212,8 +212,15 @@ func (fh *FileHandle) Read(ctx context.Context, req *fuse.ReadRequest, resp *fus
 	// ended. Maybe we should, but that would mean'd we need to track
 	// it. The kernel *should* do it for us, based on the
 	// fuse.OpenNonSeekable flag.
+	//
+	// One exception to the abve is if we fail to fully populate a
+	// page cache page; a read into page cache is always page aligned.
+	// Make sure we never serve a partial read, to avoid that.
 	buf := make([]byte, req.Size)
-	n, err := fh.r.Read(buf)
+	n, err := io.ReadFull(fh.r, buf)
+	if err == io.ErrUnexpectedEOF || err == io.EOF {
+		err = nil
+	}
 	resp.Data = buf[:n]
 	return err
 }
