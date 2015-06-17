@@ -213,7 +213,7 @@ func (fh *FileHandle) Read(ctx context.Context, req *fuse.ReadRequest, resp *fus
 	// it. The kernel *should* do it for us, based on the
 	// fuse.OpenNonSeekable flag.
 	//
-	// One exception to the abve is if we fail to fully populate a
+	// One exception to the above is if we fail to fully populate a
 	// page cache page; a read into page cache is always page aligned.
 	// Make sure we never serve a partial read, to avoid that.
 	buf := make([]byte, req.Size)
