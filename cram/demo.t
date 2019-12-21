@@ -3,6 +3,7 @@
   $ echo hello, world >data/greeting
   $ echo gold >data/buried/deep/loot
   $ find data | xargs touch -t 201312111203 --
+  $ unset TIME_STYLE
   $ ( cd data && zip -r -q ../archive.zip . )
   $ wait_for_mount() { while [ "$(stat -f --printf='%T' mnt)" != "fuseblk" ]; do sleep 0.1; done }
 
